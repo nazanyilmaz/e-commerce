@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ScrollView,
   Image,
+  Alert,
 } from 'react-native';
 
 import Button from '../../components/ui/button';
@@ -18,13 +19,29 @@ import Spinner from '../../components/ui/spinner';
 import {width} from '../../utils/constans';
 import {Heart} from 'iconsax-react-native';
 import StoreContext from '../../context';
+import {LOGIN} from '../../utils/routes';
 
 // create a component
-const ProductDetail = ({route}) => {
+const ProductDetail = ({route, navigation}) => {
   const [products, setProducts] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const {addCart} = useContext(StoreContext);
+  const {addCart, addToFavorites, isLogin} = useContext(StoreContext);
+
   const {item} = route?.params;
+  const checkIsLogin = () => {
+    if (isLogin) {
+      addToFavorites(item);
+    } else {
+      Alert.alert('Log-in', 'Please Log-in', [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'OK', onPress: () => navigation.navigate(LOGIN)},
+      ]);
+    }
+  };
   const getProductDetail = () => {
     setIsLoading(true);
     getRequest(PRODUCTS_URL + `/${item.id}`)
@@ -102,8 +119,12 @@ const ProductDetail = ({route}) => {
                   ${item.price}
                 </Text>
               </View>
-              <TouchableOpacity>
-                <Heart color={AppColors.PINK} size={35} variant="Bold" />
+              <TouchableOpacity onPress={() => checkIsLogin()}>
+                {item.favorites ? (
+                  <Heart color={AppColors.PINK} size={18} variant="Bold" />
+                ) : (
+                  <Heart color={AppColors.PINK} size={18} />
+                )}
               </TouchableOpacity>
             </View>
             <View>

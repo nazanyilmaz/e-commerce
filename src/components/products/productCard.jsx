@@ -6,20 +6,37 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  Alert,
   Pressable,
 } from 'react-native';
 import {height, width} from '../../utils/constans';
 import AppColors from '../../theme/colors';
 import {Heart} from 'iconsax-react-native';
 import {useNavigation} from '@react-navigation/native';
-import {PRODUCTDETAIL} from '../../utils/routes';
 import Button from '../ui/button';
 import StoreContext from '../../context';
+import {LOGIN, PRODUCTDETAIL} from '../../utils/routes';
 
 // create a component
 const ProductCard = ({item}) => {
   const navigation = useNavigation();
-  const {addCart} = useContext(StoreContext);
+  const {addCart, addToFavorites, isLogin} = useContext(StoreContext);
+
+  const checkIsLogin = () => {
+    if (isLogin) {
+      addToFavorites(item);
+    } else {
+      Alert.alert('Log-in', 'Please Log-in', [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'OK', onPress: () => navigation.navigate(LOGIN)},
+      ]);
+    }
+  };
+
   return (
     <Pressable
       onPress={() => navigation.navigate(PRODUCTDETAIL, {item: item})}
@@ -72,8 +89,12 @@ const ProductCard = ({item}) => {
             ${item.price}
           </Text>
         </View>
-        <TouchableOpacity>
-          <Heart color={AppColors.PINK} size={18} variant="Bold" />
+        <TouchableOpacity onPress={() => checkIsLogin()}>
+          {item.favorites ? (
+            <Heart color={AppColors.PINK} size={18} variant="Bold" />
+          ) : (
+            <Heart color={AppColors.PINK} size={18} />
+          )}
         </TouchableOpacity>
       </View>
 

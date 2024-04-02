@@ -1,26 +1,27 @@
 //import liraries
-import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import AppColors from '../../theme/colors';
+import React, {useContext} from 'react';
+import {View, FlatList} from 'react-native';
+import {screenStyles} from '../../styles/screenStyle';
+import StoreContext from '../../context';
+import FavoriteCard from '../../components/favorites/favoritesCard';
+import ListEmtyComponent from '../../components/ui/listEmtyComponent';
 
 // create a component
 const Favorites = () => {
+  const {favorites} = useContext(StoreContext);
   return (
-    <View style={styles.container}>
-      <Text>MyFavorites</Text>
+    <View style={screenStyles.container}>
+      <FlatList
+        ListEmptyComponent={() => <ListEmtyComponent />}
+        contentContainerStyle={{paddingBottom: 40}}
+        showsVerticalScrollIndicator={false}
+        data={favorites}
+        renderItem={({item}) => <FavoriteCard item={item} />}
+        keyExtractor={item => item.id}
+      />
     </View>
   );
 };
-
-// define your styles
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: AppColors.WHITE,
-  },
-});
 
 //make this component available to the app
 export default Favorites;

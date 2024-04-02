@@ -1,7 +1,6 @@
 //import liraries
 import React, {useContext} from 'react';
 import {View, FlatList} from 'react-native';
-
 import StoreContext from '../../context';
 import CartCard from './cartCard';
 import {screenStyles} from '../../styles/screenStyle';
